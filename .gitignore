@@ -1,0 +1,6 @@
+.venv
+__pycache__/
+*.pyc
+PetImages/
+checkpoints/
+.DS_Store
