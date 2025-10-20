@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+    <head>
+        <meta charset="utf-8">
+        <title>Dogs vs Cats</title>
+        <link rel="stylesheet" href="/style.css">
+    </head>
+    <body>
+        <main>
+            <h1>Dogs 🐶 vs 🐱 Cats </h1>
+
+            <div class="card">
+                <input id="file" type="file" accept="image/*">
+                <button id="btn" disabled>Predict</button>
+
+                <img id="preview" alt="Display" style="display:none">
+                <div id="resault" class="resault"></div>
+                <pre id="raw" class="raw"></pre>
+            </div>
+        </main>
+        <script>
+            const f = document.getElementById('file');
+            const b = document.getElementById('btn');
+            const p = document.getElementById('preview');
+            const r = document.getElementById('resault');
+            const raw = document.getElementById('raw');
+
+            f.addEventListener('change', () => {
+                r.textContent = '';
+                raw.textContent = '';
+                const file = f.files[0];
+                b.disabled = !file;
+                if (file){
+                    p.src = URL.createObjectURL(file);
+                    p.style.display = 'block';
+                } else {
+                    p.style.display = 'none';
+                }
+                }
+            );
+            
+            b.addEventListener('click', async () => {
+                const file = f.files[0];
+                if(!file) return;
+                b.disabled = true;
+                b.textContent = "predicting...";
+                r.textContent = '';
+                raw.textContent = '';
+                try{
+                    const fd = new FormData();
+                    fd.append('file', file);
+                    const res = await fetch('/predict', {method: 'POST', body: fd});
+                    const data = await res.json();
+                    if(!res.ok) throw new Error(data?.detail || 'Request failed');
+                    const pct = (data.confidence * 100).toFixed(1);
+                    const he = data.label === 'dog' ? 'dog' : 'cat';
+                    r.textContent = `I'm ${pct}% sure it's a ${he}`;
+                    raw.textContent = JSON.stringify(data, null, 2);
+                } catch (e) {
+                    r.textContent = 'Error' + (e.message || e);
+                } finally {
+                    b.disabled = false;
+                    b.textContent = 'Predicted';
+                }
+            });
+
+        </script>
+    </body>
+</html>

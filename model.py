@@ -33,8 +33,6 @@ df = pd.DataFrame()
 df['images'] = input_path
 df['label'] = label
 df = df.sample(frac=1).reset_index(drop=True)
-#df['label'] = df['label'].astype('str')
-print(df.head())
  
 plt.figure(figsize=(25,25))
 temp = df[df['label'] == 1]['images']

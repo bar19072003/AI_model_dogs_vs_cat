@@ -3,8 +3,10 @@ import numpy as np
 from PIL import Image, ImageOps
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse, HTMLResponse
 from tensorflow.keras.models import load_model
 import traceback
+import os
 
 IMG_SIZE = (128, 128)
 THRESHOLD = 0.5
@@ -42,6 +44,27 @@ def postprocess(pred: float):
     label = "dog" if label_id == 1 else "cat"
     confidence = float(pred) if label == "dog" else float(1.0 - pred)
     return label, confidence
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+
+@app.get("/", response_class=HTMLResponse)
+def index():
+    path = os.path.join(HERE, "index.html")
+    if not os.path.exists(path):
+        return HTMLResponse("<h3>index.html not found</h3>", status_code=404)
+    return FileResponse(path)
+
+@app.get("/style.css")
+def style():
+    path = os.path.join(HERE, "style.css")
+    if not os.path.exists(path):
+        raise HTTPException(status_code=404, detail="style.css not found")
+    return FileResponse(path, media_type="text/css")
+
+@app.get("/favicon.ico")
+def favicon():
+    return HTMLResponse(status_code=204)
+
 
 @app.get("/health")
 def health():
