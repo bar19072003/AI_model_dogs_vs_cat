@@ -13,6 +13,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY app.py best_model.keras ./
 
+COPY index.html style.css ./
+
 EXPOSE 8000
 
 HEALTHCHECK --interval=30s --timeout=3s \

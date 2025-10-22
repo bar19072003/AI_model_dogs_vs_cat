@@ -25,12 +25,31 @@ Dogs-vs-cats-AI-model/
 └─ static/
 ├─ style.css
 └─ app.js
+├─ Dockerfile
+├─ .dockerignore
 
 The dataset is expected under `PetImages/` with subfolders `Cat/` and `Dog/` (Kaggle “Cat and Dog” style). Adjust paths in `model.py` if needed.
 
 ---
 
 ## Getting Started
+
+## Run with Docker
+
+### 1) Build the image
+```bash
+docker build -t dogs-vs-cats-ai
+
+### 2) Run the container(serving API + web UI)
+```bash
+docker run --rm -p 8000:8000 dogs-vs-vats-api
+
+### 3) Open web borwser
+http://localhost:8000
+API docs : http://localhost:8000/docs
+
+
+## RUN without Docker
 
 ### 1) Environment 
 
